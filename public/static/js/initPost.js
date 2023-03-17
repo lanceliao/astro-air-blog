@@ -45,6 +45,7 @@ function initLazyLoad() {
       let grandSon = item.firstChild.firstChild;
       let img = new Image();
       img.src = grandSon.src;
+
       let sign = md5(grandSon.src);
 
       img.onload = function () {
@@ -53,7 +54,17 @@ function initLazyLoad() {
         style.innerHTML = renderStyle(sign, percent);
         let target = document.getElementById(`lht${sign}`)
 
-        if (!target) return;
+        if (!target) {
+          // If an absolute path is used as the image link, such as "/static/img.png",
+          // the URL of grandSon.src will become "https://example.com/static/img.png", resulting in a different md5.
+          // Therefore, we attempt to handle this situation by trying again with the absolute path.
+          const a = document.createElement('a');
+          a.href = grandSon.src;
+          let sign = md5(a.pathname);
+
+          target = document.getElementById(`lht${sign}`)
+          if (!target) return;
+        };
         target.parentNode.insertBefore(style, target);
         item.classList.remove("image-load");
         item.classList.add("image-loaded");
