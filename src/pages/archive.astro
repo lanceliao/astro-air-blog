@@ -2,24 +2,52 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArchivePostList from "../layouts/ArchivePostList.astro";
 const allPosts = await Astro.glob("./posts/*.md");
-const tags = ["新闻稿", "虚幻引擎", "源码研究"];
-const posts = [];
+allPosts.sort((a, b) => Date.parse(b.frontmatter.pubDate) - Date.parse(a.frontmatter.pubDate));
 
-tags.forEach((tag) => {
-  let filteredPosts = allPosts.filter((post) => post.frontmatter.tags.includes(tag));
-  posts.push(filteredPosts);
+const uniqueTags = [...new Set(allPosts.map((post) => post.frontmatter.tags).flat())];
+
+const posts = {};
+for (let post of allPosts) {
+  const date = new Date(post.frontmatter.pubDate);
+  const yearMonth = new Date(post.frontmatter.pubDate).getFullYear();
+  //const yearMonth = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}`;
+  if (!posts[yearMonth]) {
+    posts[yearMonth] = [];
+  }
+  posts[yearMonth].push(post);
+}
+
+const postList = Object.entries(posts).sort((a, b) => {
+  return b[0].localeCompare(a[0]);
 });
 ---
 
 <BaseLayout primaryTitle="归档">
   <section class="archive">
+
+    <div class="section-content section-tag">
+      <div class="archive-tag">
+        {
+          uniqueTags.map((tag) => {
+            return (
+              <a href={`/tags/${tag}`} class="tag">
+                {tag}
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+
     <div class="section-content section-tag">
       {
-        tags.map((tag, index) => {
+        postList.map(([yearMonth, postArray]) => {
           return (
             <div class="archive-tag">
-              <h2 class="tag-header">{tag}</h2>
-              <div class="tag-post-list">{posts[index].length !== 0 ? <ArchivePostList posts={posts[index]} /> : <div class="no-posts">暂无文章</div>}</div>
+              <h2 class="tag-header">{yearMonth}</h2>
+              <div class="tag-post-list">
+                {postArray.length !== 0 ? <ArchivePostList posts={postArray} /> : <div class="no-posts">暂无文章</div>}
+              </div>
             </div>
           );
         })
