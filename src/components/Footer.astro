@@ -2,6 +2,7 @@
 import { SITE_TITLE, SITE_EMAIL } from "../consts";
 const { theme } = Astro.props;
 import { SITE_NAME } from "../consts";
+import { FOOTER_ITEMS } from "../consts"
 const date = new Date();
 const year = date.getFullYear();
 ---
@@ -18,21 +19,35 @@ const year = date.getFullYear();
 
           <div class="item products">
             <div class="item-title">作品</div>
-            <a href="/" target="_blank">本站</a>
-            <a href="https://the.top" target="_blank">TOP Link</a>
-            <a href="https://news.the.top" target="_blank">TOP News</a>
+            {
+              FOOTER_ITEMS.PRODUCTS?.map((product) => {
+                return (
+                  <a href={product.url} target="_blank">{product.name}</a>
+                );
+              })
+            }
           </div>
 
           <div class="item community">
             <div class="item-title">社媒</div>
-            <a href="https://twitter.com/austinit" target="_blank">Twitter</a>
-            <a href="https://github.com/austin2035" target="_blank">Github</a>
-            <a href="https://t.me/austin2035" target="_blank">Telegram</a>
+            {
+              FOOTER_ITEMS.COMMUNITIES?.map((community) => {
+                return (
+                  <a href={community.url} target="_blank">{community.name}</a>
+                );
+              })
+            }
           </div>
 
           <div class="item resources">
             <div class="item-title">友链</div>
-            <a href="https://the.top">THE.TOP</a>
+            {
+              FOOTER_ITEMS.RESOURCES?.map((resource) => {
+                return (
+                  <a href={resource.url} target="_blank">{resource.name}</a>
+                );
+              })
+            }
           </div>
         </div>
       </div>
