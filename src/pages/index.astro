@@ -4,6 +4,13 @@ import Tile from "../layouts/Tile.astro";
 import MoreTile from "../layouts/MoreTile.astro";
 const allPosts = await Astro.glob("../pages/posts/*.md");
 allPosts.sort((a, b) => Date.parse(b.frontmatter.pubDate) - Date.parse(a.frontmatter.pubDate));
+
+// Show the latest featured post on the first tile
+let featuredIndex = allPosts.findIndex((post) => post.frontmatter.featured === true);
+if (featuredIndex > 0) {
+    let item = allPosts.splice(featuredIndex, 1)[0];
+    allPosts.unshift(item);
+}
 ---
 
 <BaseLayout>
