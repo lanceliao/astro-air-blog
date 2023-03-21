@@ -48,7 +48,7 @@ function initLazyLoad() {
 
       let sign = md5(grandSon.src);
 
-      target = document.getElementById(`lht${sign}`)
+      let target = document.getElementById(`lht${sign}`)
       if (!target)  {
           // If an absolute path is used as the image link, such as "/static/img.png",
           // the URL of grandSon.src will become "https://example.com/static/img.png", resulting in a different md5.
